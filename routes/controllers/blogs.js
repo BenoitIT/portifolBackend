@@ -1,33 +1,30 @@
 const Blog = require("./../models/blog");
 const { asyncWrapper } = require("../middleware/tryCatch");
-const multer = require("multer");
-const storage = multer.diskStorage({
-    destination:function(req,file,callBack){
-      callBack(null,'/uploads')
-    },
-    filename:function(req,file,callback){
-     callback(null,new Date().toISOString()+file.originalname)
-    }
-});
-const fileFilter = (req,file,callback)=>{
-    if(file.mimeType==="image/jpg"||file.mimeType==="image/png"){
-        callback(null,true)
-    }
-    else{
-        callback(null,false)
-    }
-}
-//multer image upload
-const upload=multer({storage:storage},fileFilter)
-
+const { findByIdAndRemove, findOne } = require("../models/messages");
 //function to create new blog
 const addBlog = asyncWrapper(async (req, res) => {
   const { blogTitle, blogDescription } = req.body;
-  Blog.create({
-    blogTitle,
-    blogDescription,
-    blogImg:req.file.path
+  const newBlog = await Blog.create({
+    blogTitle: blogTitle,
+    blogDescription: blogDescription,
+    blogImg: req.file.filename,
   });
   res.status(201).json({ message: "new blog added" });
 });
-module.exports = { addBlog };
+//listing blogs
+const listBlogs = asyncWrapper(async (req, res) => {
+  const blogs = await Blog.find({});
+  res.status(200).json({ message: "new blog added", blogsList: blogs });
+});
+//delete blog
+const deleteBlog = asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  await findByIdAndRemove({ _id: id });
+  res.status(200).json({ message: "delete successiful" });
+});
+const viewSingleBlog = asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  const blog = await findOne({ id });
+  res.status(200).json({ data: blog });
+});
+module.exports = { addBlog, listBlogs, deleteBlog,viewSingleBlog };
