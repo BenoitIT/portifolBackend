@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const Schema= mongoose.Schema;
+require('mongoose-type-url');
 const blogSchema= new Schema({
     blogTitle:{
         type:String,
@@ -10,8 +11,8 @@ const blogSchema= new Schema({
         maxLength:300
     },
     blogImg:{
-        type:String
-    }
-})
+        type:mongoose.SchemaTypes.Url}
+   }
+   )
 module.exports=mongoose.model("Blog",blogSchema)
 

@@ -7,7 +7,7 @@ const {ConnectDb}=require('./routes/connections/dbConnect')
 app.use(express.json())
 app.use('/api/v1/portifolio', routes)
 app.use(notFound)
-app.use(errorHandler)
+//app.use(errorHandler)
 const port=process.env.PORT||3000
 const startApp=async()=>{
     await ConnectDb(process.env.MONGO_URL)
